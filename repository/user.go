@@ -6,5 +6,5 @@ import "aigram-backend/entities"
 type UserRepository interface {
 	FindByID(id int64) *entities.User
 	Create(user *entities.User) *entities.User
-	GetJWT(githubToken *string, user *entities.User) (*string, error)
+	GetJWT(user *entities.User) (*string, error)
 }

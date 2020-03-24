@@ -1,5 +1,11 @@
 package config
 
+import (
+	"fmt"
+
+	"github.com/sirupsen/logrus"
+)
+
 // AppConfiguration main config for the app
 type AppConfiguration struct {
 	Server struct {
@@ -27,7 +33,13 @@ type AppConfiguration struct {
 	} `yaml:"cors"`
 }
 
+// Print current configuration
+func (config *AppConfiguration) Print(logger *logrus.Logger) {
+	logger.Debug(fmt.Sprintf("The configuration loaded: %+v", config))
+}
+
 // BaseObject represents base object for controllers and services
 type BaseObject struct {
 	Config *AppConfiguration
+	Logger *logrus.Logger
 }

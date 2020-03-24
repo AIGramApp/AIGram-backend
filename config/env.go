@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
-// Init inits the configuration
-func Init() *AppConfiguration {
+// LoadConfig inits the configuration
+func LoadConfig(logger *logrus.Logger) *AppConfiguration {
 	config := viper.New()
 	config.AddConfigPath("./")
 	config.SetConfigName("config")
@@ -22,6 +23,6 @@ func Init() *AppConfiguration {
 	if err != nil {
 		panic(fmt.Errorf("Cannot load the configuration file %s", err.Error()))
 	}
-	fmt.Println("Current configuration ", currentConfig)
+	currentConfig.Print(logger)
 	return currentConfig
 }
