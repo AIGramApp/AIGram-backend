@@ -68,12 +68,13 @@ func (userController *UserController) Auth(c *gin.Context) {
 	existingUser := userController.userRepository.FindByID(user.GetID())
 	if existingUser == nil {
 		// Register a new user
+		email, _, _ := client.Users.ListEmails(context.Background(), nil)
 		existingUser = userController.userRepository.Create(&entities.User{
 			ID:       user.GetID(),
 			Name:     user.GetName(),
 			Avatar:   user.GetAvatarURL(),
 			Username: user.GetLogin(),
-			Email:    user.GetEmail(),
+			Email:    email[0].GetEmail(),
 		})
 	}
 	var token *string
