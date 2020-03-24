@@ -55,8 +55,7 @@ func (userController *UserController) Auth(c *gin.Context) {
 		return
 	}
 	var client *github.Client
-	var githubToken *string
-	client, githubToken, err = userController.githubRepository.GetUserTokenGithubClient(form)
+	client, _, err = userController.githubRepository.GetUserTokenGithubClient(form)
 	if err != nil {
 		userController.Logger.Errorf("Error happened while creating a new github client %s", err.Error())
 		c.Status(http.StatusBadRequest)
@@ -74,6 +73,7 @@ func (userController *UserController) Auth(c *gin.Context) {
 			Name:     user.GetName(),
 			Avatar:   user.GetAvatarURL(),
 			Username: user.GetLogin(),
+			Email:    user.GetEmail(),
 		})
 	}
 	var token *string
@@ -89,6 +89,7 @@ func (userController *UserController) Auth(c *gin.Context) {
 		8*60*60,
 		"",
 		userController.Config.JWT.Domain,
+		http.SameSiteDefaultMode,
 		userController.Config.JWT.Secure,
 		true,
 	)
@@ -102,6 +103,7 @@ func (userController *UserController) Logout(c *gin.Context) {
 		-1,
 		"",
 		userController.Config.JWT.Domain,
+		http.SameSiteDefaultMode,
 		userController.Config.JWT.Secure,
 		true,
 	)

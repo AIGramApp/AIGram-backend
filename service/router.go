@@ -2,6 +2,7 @@ package service
 
 import (
 	"aigram-backend/config"
+	"aigram-backend/controllers"
 	"aigram-backend/middleware"
 	"time"
 
@@ -10,7 +11,7 @@ import (
 )
 
 // InitRouter inits the server
-func InitRouter(config *config.AppConfiguration, userController *controllers.UserController, githubController *controllers.GithubController) *gin.Engine {
+func InitRouter(config *config.AppConfiguration, userController *controllers.UserController) *gin.Engine {
 	router := gin.Default()
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     config.CORS.Domains,
