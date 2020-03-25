@@ -31,6 +31,12 @@ type AppConfiguration struct {
 	CORS struct {
 		Domains []string `yaml:"domains"`
 	} `yaml:"cors"`
+	S3 struct {
+		AccessKey    string `yaml:"accessKey"`
+		SecretKey    string `yaml:"secretKey"`
+		Region       string `yaml:"region"`
+		BucketImages string `yaml:"bucketImages"`
+	} `yaml:"s3"`
 }
 
 // Print current configuration

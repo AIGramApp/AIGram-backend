@@ -11,7 +11,7 @@ import (
 )
 
 // InitRouter inits the server
-func InitRouter(config *config.AppConfiguration, userController *controllers.UserController) *gin.Engine {
+func InitRouter(config *config.AppConfiguration, userController *controllers.UserController, postController *controllers.PostController) *gin.Engine {
 	router := gin.Default()
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     config.CORS.Domains,
@@ -32,6 +32,13 @@ func InitRouter(config *config.AppConfiguration, userController *controllers.Use
 			user.POST("logout", userController.Logout)
 		}
 		api.POST("/auth", userController.Auth)
+
+		//Posts
+		posts := api.Group("posts")
+		posts.Use(authenticationMiddleware)
+		{
+			posts.POST("/upload", postController.UploadImage)
+		}
 	}
 	return router
 }
