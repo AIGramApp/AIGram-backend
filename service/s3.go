@@ -45,13 +45,14 @@ func NewS3Service(appConfig *config.AppConfiguration) *S3Service {
 
 // Upload uploads a new file and returns the url to the file
 func (s3Service *S3Service) Upload(file io.Reader, extension string) (*string, error) {
-	filename := fmt.Sprintf("%s%s", uuid.New().String(), extension)
+	filename := fmt.Sprintf("%s.%s", uuid.New().String(), extension)
 	_, err := s3Service.uploader.Upload(&s3manager.UploadInput{
 		Bucket:       aws.String(s3Service.Config.S3.BucketImages),
 		Key:          aws.String(filename),
 		Body:         file,
 		CacheControl: aws.String("max-age=86400"),
 		ACL:          aws.String("public-read"),
+		ContentType:  aws.String(fmt.Sprintf("image/%s", extension)),
 	})
 	if err != nil {
 		return nil, err

@@ -41,7 +41,8 @@ func (postController *PostController) UploadImage(c *gin.Context) {
 		c.Status(http.StatusBadRequest)
 		return
 	}
-	filename, err := postController.s3Repository.Upload(f, filepath.Ext(fileHeader.Filename))
+	// Get the file extension without the dot
+	filename, err := postController.s3Repository.Upload(f, filepath.Ext(fileHeader.Filename)[1:])
 	if err != nil {
 		postController.Logger.Errorf("Image cannot be uploaded %s", err.Error())
 		c.Status(http.StatusBadRequest)
