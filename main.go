@@ -5,6 +5,8 @@ import (
 	"aigram-backend/controllers"
 	"aigram-backend/service"
 	"fmt"
+	"os"
+	"strconv"
 
 	"github.com/sirupsen/logrus"
 
@@ -51,6 +53,10 @@ func buildContainer() *dig.Container {
 func main() {
 	container := buildContainer()
 	container.Invoke(func(router *gin.Engine, config *config.AppConfiguration) {
-		router.Run(fmt.Sprintf(":%d", config.Server.Port))
+		port := os.Getenv("PORT")
+		if port == "" {
+			port = strconv.Itoa(config.Server.Port)
+		}
+		router.Run(fmt.Sprintf(":%s", port))
 	})
 }
