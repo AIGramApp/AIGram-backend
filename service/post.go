@@ -28,3 +28,17 @@ func (postService *PostService) Publish(post *entities.Post) *entities.Post {
 	postService.DB.Create(post)
 	return post
 }
+
+// Feed returns all the latest posts
+func (postService *PostService) Feed() []entities.Post {
+	posts := []entities.Post{}
+	postService.DB.Preload("User").Order("created_at desc").Find(&posts)
+	return posts
+}
+
+// PostsByUser returns all the posts by a specific user
+func (postService *PostService) PostsByUser(id int64) []entities.Post {
+	posts := []entities.Post{}
+	postService.DB.Preload("User").Where("user_refer = ?", id).Order("created_at desc").Find(&posts)
+	return posts
+}

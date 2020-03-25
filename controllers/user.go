@@ -8,6 +8,7 @@ import (
 	"aigram-backend/repository"
 	"context"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/go-github/v29/github"
@@ -19,10 +20,11 @@ type UserController struct {
 	config.BaseObject
 	userRepository   repository.UserRepository
 	githubRepository repository.GithubRepository
+	postRepository   repository.PostRepository
 }
 
 // NewUserController init a new controller
-func NewUserController(appConfig *config.AppConfiguration, logger *logrus.Logger, userRepository repository.UserRepository, githubRepository repository.GithubRepository) *UserController {
+func NewUserController(appConfig *config.AppConfiguration, logger *logrus.Logger, userRepository repository.UserRepository, githubRepository repository.GithubRepository, postRepository repository.PostRepository) *UserController {
 	return &UserController{
 		BaseObject: config.BaseObject{
 			Config: appConfig,
@@ -30,6 +32,7 @@ func NewUserController(appConfig *config.AppConfiguration, logger *logrus.Logger
 		},
 		userRepository:   userRepository,
 		githubRepository: githubRepository,
+		postRepository:   postRepository,
 	}
 }
 
@@ -42,7 +45,7 @@ func currentUser(c *gin.Context) middleware.Claims {
 // GetUser finds the user by id and returns it in json response
 func (userController *UserController) GetUser(c *gin.Context) {
 	currentUser := userController.userRepository.FindByID(currentUser(c).ID)
-	c.JSON(200, currentUser)
+	c.JSON(http.StatusOK, currentUser)
 }
 
 // Auth method will either register a new or login an existing user
@@ -108,4 +111,25 @@ func (userController *UserController) Logout(c *gin.Context) {
 		userController.Config.JWT.Secure,
 		true,
 	)
+}
+
+// Profile will return the full profile info for a user
+func (userController *UserController) Profile(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		userController.Logger.Errorf("ID is not given %s", err.Error())
+		c.Status(http.StatusNotFound)
+		return
+	}
+	user := userController.userRepository.FindByID(int64(id))
+	if user == nil {
+		userController.Logger.Errorf("User cannot be found %d", id)
+		c.Status(http.StatusNotFound)
+		return
+	}
+	posts := userController.postRepository.PostsByUser(user.ID)
+	c.JSON(http.StatusOK, gin.H{
+		"user":  user,
+		"posts": posts,
+	})
 }

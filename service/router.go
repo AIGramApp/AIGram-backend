@@ -40,6 +40,8 @@ func InitRouter(config *config.AppConfiguration, userController *controllers.Use
 			posts.POST("/upload", postController.UploadImage)
 			posts.POST("/publish", postController.Publish)
 		}
+		api.GET("/feed", postController.Feed)
+		api.GET("/profile/:id", userController.Profile)
 	}
 	return router
 }
