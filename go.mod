@@ -11,6 +11,7 @@ require (
 	github.com/google/go-github/v29 v29.0.3
 	github.com/google/uuid v1.1.1
 	github.com/jinzhu/gorm v1.9.12
+	github.com/lib/pq v1.1.1
 	github.com/sirupsen/logrus v1.2.0
 	github.com/spf13/viper v1.6.2
 	go.uber.org/dig v1.8.0

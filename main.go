@@ -30,11 +30,14 @@ func buildContainer() *dig.Container {
 	container.Provide(func(config *config.AppConfiguration) *service.S3Service {
 		return service.NewS3Service(config)
 	})
+	container.Provide(func(config *config.AppConfiguration, db *gorm.DB) *service.PostService {
+		return service.NewPostService(config, db)
+	})
 	container.Provide(func(config *config.AppConfiguration, logger *logrus.Logger, userService *service.UserService, githubService *service.GithubService) *controllers.UserController {
 		return controllers.NewUserController(config, logger, userService, githubService)
 	})
-	container.Provide(func(config *config.AppConfiguration, logger *logrus.Logger, s3Service *service.S3Service) *controllers.PostController {
-		return controllers.NewPostController(config, logger, s3Service)
+	container.Provide(func(config *config.AppConfiguration, logger *logrus.Logger, s3Service *service.S3Service, postService *service.PostService, userService *service.UserService) *controllers.PostController {
+		return controllers.NewPostController(config, logger, s3Service, postService, userService)
 	})
 	container.Provide(func(config *config.AppConfiguration) *service.GithubService {
 		return service.NewGithubService(config)

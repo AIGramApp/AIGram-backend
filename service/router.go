@@ -38,6 +38,7 @@ func InitRouter(config *config.AppConfiguration, userController *controllers.Use
 		posts.Use(authenticationMiddleware)
 		{
 			posts.POST("/upload", postController.UploadImage)
+			posts.POST("/publish", postController.Publish)
 		}
 	}
 	return router

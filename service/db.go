@@ -25,6 +25,7 @@ func InitializeDatabase(config *config.AppConfiguration) *gorm.DB {
 		panic(fmt.Sprintf("Cannot connect to database %s", err.Error()))
 	}
 	db.AutoMigrate(&entities.User{})
+	db.AutoMigrate(&entities.Post{})
 
 	Seed()
 	return db

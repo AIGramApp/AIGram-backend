@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"aigram-backend/config"
+	"aigram-backend/entities"
 	"aigram-backend/repository"
 	"net/http"
 	"path/filepath"
@@ -13,17 +14,21 @@ import (
 // PostController to add new posts/images
 type PostController struct {
 	config.BaseObject
-	s3Repository repository.S3Repository
+	s3Repository   repository.S3Repository
+	postRepository repository.PostRepository
+	userRepository repository.UserRepository
 }
 
 // NewPostController inits a new post controller
-func NewPostController(appConfig *config.AppConfiguration, logger *logrus.Logger, s3Repository repository.S3Repository) *PostController {
+func NewPostController(appConfig *config.AppConfiguration, logger *logrus.Logger, s3Repository repository.S3Repository, postRepository repository.PostRepository, userRepository repository.UserRepository) *PostController {
 	return &PostController{
 		BaseObject: config.BaseObject{
 			Config: appConfig,
 			Logger: logger,
 		},
-		s3Repository: s3Repository,
+		s3Repository:   s3Repository,
+		postRepository: postRepository,
+		userRepository: userRepository,
 	}
 }
 
@@ -48,7 +53,23 @@ func (postController *PostController) UploadImage(c *gin.Context) {
 		c.Status(http.StatusBadRequest)
 		return
 	}
-	c.JSON(200, gin.H{
+	c.JSON(http.StatusOK, gin.H{
 		"filename": filename,
 	})
+}
+
+// Publish adds a new post
+func (postController *PostController) Publish(c *gin.Context) {
+	currentUser := postController.userRepository.FindByID(currentUser(c).ID)
+	var post entities.Post
+	err := c.BindJSON(&post)
+	if err != nil {
+		postController.Logger.Errorf("Error happened while adding a new post %s", err.Error())
+		c.JSON(http.StatusBadRequest, err)
+		return
+	}
+	// Make the current user owner of the post
+	post.User = *currentUser
+	postController.postRepository.Publish(&post)
+	c.JSON(http.StatusOK, post)
 }
