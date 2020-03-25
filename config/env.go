@@ -19,7 +19,7 @@ func LoadConfig(logger *logrus.Logger) *AppConfiguration {
 	config.ReadInConfig()
 	err := config.Unmarshal(&currentConfig)
 	if os.Getenv("CONFIG") != "" {
-		yaml.Unmarshal([]byte(os.Getenv("CONFIG")), currentConfig)
+		err = yaml.Unmarshal([]byte(os.Getenv("CONFIG")), currentConfig)
 	}
 	if err != nil {
 		panic(fmt.Errorf("Cannot load the configuration file %s", err.Error()))
