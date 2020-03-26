@@ -73,6 +73,8 @@ func (postController *PostController) Publish(c *gin.Context) {
 	postController.postRepository.Publish(&post)
 	c.JSON(http.StatusOK, post)
 }
+
+// Feed returns latest feed items
 func (postController *PostController) Feed(c *gin.Context) {
 	posts := postController.postRepository.Feed()
 	c.JSON(http.StatusOK, posts)

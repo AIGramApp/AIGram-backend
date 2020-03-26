@@ -22,6 +22,7 @@ func InitRouter(config *config.AppConfiguration, userController *controllers.Use
 		MaxAge:           12 * time.Hour,
 	}))
 	api := router.Group("api")
+	api.GET("/csrf", userController.CSRF)
 	authenticationMiddleware := middleware.AuthenticationRequired(config)
 	api.Use(middleware.CSRF())
 	{

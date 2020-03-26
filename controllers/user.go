@@ -10,6 +10,8 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/google/uuid"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/go-github/v29/github"
 	"github.com/sirupsen/logrus"
@@ -132,4 +134,19 @@ func (userController *UserController) Profile(c *gin.Context) {
 		"user":  user,
 		"posts": posts,
 	})
+}
+
+// CSRF set a csrf token
+func (userController *UserController) CSRF(c *gin.Context) {
+	csrf := uuid.New().String()
+	c.SetCookie(
+		"CSRF-TOKEN",
+		csrf,
+		0,
+		"",
+		userController.Config.JWT.Domain,
+		http.SameSiteDefaultMode,
+		userController.Config.JWT.Secure,
+		false,
+	)
 }

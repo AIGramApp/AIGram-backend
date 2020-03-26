@@ -52,11 +52,12 @@ func buildContainer() *dig.Container {
 
 func main() {
 	container := buildContainer()
-	container.Invoke(func(router *gin.Engine, config *config.AppConfiguration) {
+	container.Invoke(func(router *gin.Engine, config *config.AppConfiguration, logger *logrus.Logger) {
 		port := os.Getenv("PORT")
 		if port == "" {
 			port = strconv.Itoa(config.Server.Port)
 		}
+		logger.Infof("Running on %s", port)
 		router.Run(fmt.Sprintf(":%s", port))
 	})
 }
