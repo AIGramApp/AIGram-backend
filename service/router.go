@@ -23,13 +23,13 @@ func InitRouter(config *config.AppConfiguration, userController *controllers.Use
 	}))
 	api := router.Group("api")
 	authenticationMiddleware := middleware.AuthenticationRequired(config)
-	api.Use(middleware.CSRF())
+	// api.Use(middleware.CSRF())
 	{
 		user := api.Group("user")
 		user.Use(authenticationMiddleware)
 		{
 			user.GET("", userController.GetUser)
-			user.POST("logout", userController.Logout)
+			// user.POST("logout", userController.Logout)
 		}
 		api.POST("/auth", userController.Auth)
 

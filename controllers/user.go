@@ -87,17 +87,9 @@ func (userController *UserController) Auth(c *gin.Context) {
 		c.Status(http.StatusUnauthorized)
 		return
 	}
-	// Set http-only, same-domain, 8-hours expiring cookie on all paths for the frontend
-	c.SetCookie(userController.Config.JWT.CookieName,
-		*token,
-		8*60*60,
-		"",
-		userController.Config.JWT.Domain,
-		http.SameSiteDefaultMode,
-		userController.Config.JWT.Secure,
-		true,
-	)
-	c.Status(http.StatusOK)
+	c.JSON(http.StatusOK, gin.H{
+		"token": token,
+	})
 }
 
 // Logout logs out the user

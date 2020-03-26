@@ -4,6 +4,7 @@ import (
 	"aigram-backend/config"
 	"errors"
 	"net/http"
+	"strings"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -19,11 +20,17 @@ type Claims struct {
 // If it is present, jwt is parsed and user information is set on the context
 func AuthenticationRequired(config *config.AppConfiguration) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		tokenString, err := c.Cookie(config.JWT.CookieName)
-		if err != nil {
+		header := c.GetHeader("Authorization")
+		if header == "" {
 			c.AbortWithStatus(http.StatusForbidden)
 			return
 		}
+		bearerToken := strings.Split(header, " ")
+		if len(bearerToken) < 0 {
+			c.AbortWithStatus(http.StatusForbidden)
+			return
+		}
+		tokenString := bearerToken[1]
 		claims := Claims{}
 		token, err := jwt.ParseWithClaims(tokenString, &claims, func(tkn *jwt.Token) (interface{}, error) {
 			if tkn.Method.Alg() != jwt.SigningMethodHS256.Alg() {
