@@ -23,10 +23,7 @@ type AppConfiguration struct {
 		ClientSecret string `yaml:"clientSecret"`
 	} `yaml:"github"`
 	JWT struct {
-		Secret     string `yaml:"secret"`
-		CookieName string `yaml:"cookieName"`
-		Domain     string `yaml:"domain"`
-		Secure     bool   `yaml:"secure"`
+		Secret string `yaml:"secret"`
 	} `yaml:"jwt"`
 	CORS struct {
 		Domains []string `yaml:"domains"`
