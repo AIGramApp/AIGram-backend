@@ -92,19 +92,6 @@ func (userController *UserController) Auth(c *gin.Context) {
 	})
 }
 
-// Logout logs out the user
-func (userController *UserController) Logout(c *gin.Context) {
-	c.SetCookie(userController.Config.JWT.CookieName,
-		"",
-		-1,
-		"",
-		userController.Config.JWT.Domain,
-		http.SameSiteDefaultMode,
-		userController.Config.JWT.Secure,
-		true,
-	)
-}
-
 // Profile will return the full profile info for a user
 func (userController *UserController) Profile(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
